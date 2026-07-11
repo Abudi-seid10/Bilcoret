@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { formatSupabaseErrorMessage } from '../lib/formatSupabaseError'
 import { Headphones, User, Clock, Play } from 'lucide-react'
 import LoadingSkeleton from '../components/ui/LoadingSkeleton'
 import ErrorMessage from '../components/ui/ErrorMessage'
@@ -39,7 +40,7 @@ export default function Podcasts() {
       .order('episode_number', { ascending: false })
 
     if (error) {
-      setError(error.message)
+      setError(formatSupabaseErrorMessage(error.message))
     } else {
       setPodcasts(data ?? [])
     }
@@ -58,7 +59,7 @@ export default function Podcasts() {
       if (!isMounted) return
 
       if (error) {
-        setError(error.message)
+        setError(formatSupabaseErrorMessage(error.message))
       } else {
         setPodcasts(data ?? [])
       }

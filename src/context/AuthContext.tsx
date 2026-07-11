@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabaseClient'
+import { formatSupabaseErrorMessage } from '../lib/formatSupabaseError'
 import { AuthContext, type AdminProfile, type AuthContextValue } from './auth-context'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -45,12 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(email: string, password: string) {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return { error: error?.message ?? null }
+    return { error: error ? formatSupabaseErrorMessage(error.message) : null }
   }
 
   async function signUp(email: string, password: string) {
     const { error } = await supabase.auth.signUp({ email, password })
-    return { error: error?.message ?? null }
+    return { error: error ? formatSupabaseErrorMessage(error.message) : null }
   }
 
   async function signOut() {

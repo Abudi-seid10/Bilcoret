@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { formatSupabaseErrorMessage } from '../../lib/formatSupabaseError'
 import { Calendar, MapPin, Mic, Plus, Pencil, Trash2, X, Loader2, ExternalLink } from 'lucide-react'
 
 interface Seminar {
@@ -85,7 +86,7 @@ export default function AdminSeminars() {
       : await supabase.from('seminars').insert(payload)
 
     if (error) {
-      setError(error.message)
+      setError(formatSupabaseErrorMessage(error.message))
       setSaving(false)
     } else {
       setShowForm(false)

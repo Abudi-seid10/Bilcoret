@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { formatSupabaseErrorMessage } from '../../lib/formatSupabaseError'
 import { Search, Calendar, BookOpen, Clock, CheckCircle2, XCircle, Hourglass, Mail } from 'lucide-react'
 
 interface Registration {
@@ -42,7 +43,7 @@ export default function UserPortal() {
       .ilike('user_email', email.trim())
 
     if (regError) {
-      setError(regError.message)
+      setError(formatSupabaseErrorMessage(regError.message))
       setRegistrations([])
     } else if (!regs || regs.length === 0) {
       setRegistrations([])

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { formatSupabaseErrorMessage } from '../../lib/formatSupabaseError'
 import { Headphones, User, Clock, Plus, Pencil, Trash2, X, Loader2 } from 'lucide-react'
 
 interface Podcast {
@@ -87,7 +88,7 @@ export default function AdminPodcasts() {
       ? await supabase.from('podcasts').update(payload).eq('id', editing.id)
       : await supabase.from('podcasts').insert(payload)
 
-    if (error) { setError(error.message); setSaving(false) }
+    if (error) { setError(formatSupabaseErrorMessage(error.message)); setSaving(false) }
     else { setShowForm(false); fetchPodcasts() }
   }
 
