@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { formatSupabaseErrorMessage } from '../../lib/formatSupabaseError'
 import { X, Mail, User, CheckCircle2, Loader2 } from 'lucide-react'
 
 interface RegistrationModalProps {
@@ -37,7 +38,7 @@ export default function RegistrationModal({ open, onClose, itemId, itemType, ite
       if (error.code === '23505') {
         setErrorMsg('You are already registered for this item.')
       } else {
-        setErrorMsg(error.message)
+        setErrorMsg(formatSupabaseErrorMessage(error.message))
       }
     } else {
       setStatus('success')

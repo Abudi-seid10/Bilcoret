@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { formatSupabaseErrorMessage } from '../lib/formatSupabaseError'
 import { Calendar, MapPin, Mic, ExternalLink, UserPlus } from 'lucide-react'
 import LoadingSkeleton from '../components/ui/LoadingSkeleton'
 import ErrorMessage from '../components/ui/ErrorMessage'
@@ -35,7 +36,7 @@ export default function Seminars() {
       .order('date', { ascending: true })
 
     if (error) {
-      setError(error.message)
+      setError(formatSupabaseErrorMessage(error.message))
     } else {
       setSeminars(data ?? [])
     }
@@ -54,7 +55,7 @@ export default function Seminars() {
       if (!isMounted) return
 
       if (error) {
-        setError(error.message)
+        setError(formatSupabaseErrorMessage(error.message))
       } else {
         setSeminars(data ?? [])
       }
