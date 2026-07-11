@@ -34,7 +34,22 @@ export default function AdminPodcasts() {
   }
 
   useEffect(() => {
-    void fetchPodcasts({ preserveLoadingState: true })
+    let isMounted = true
+
+    const loadPodcasts = async () => {
+      const { data } = await supabase.from('podcasts').select('*').order('episode_number', { ascending: false })
+
+      if (!isMounted) return
+
+      setPodcasts(data ?? [])
+      setLoading(false)
+    }
+
+    void loadPodcasts()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   function openCreate() { setEditing(null); setForm(empty); setShowForm(true); setError('') }

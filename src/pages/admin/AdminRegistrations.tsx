@@ -55,7 +55,36 @@ export default function AdminRegistrations() {
   }
 
   useEffect(() => {
-    void fetchRegistrations({ preserveLoadingState: true })
+    let isMounted = true
+
+    const loadRegistrations = async () => {
+      const { data } = await supabase.from('registrations').select('*').order('created_at', { ascending: false })
+      const regs = data ?? []
+      const lookup: ItemLookup = {}
+      const seminarIds = regs.filter(r => r.type === 'seminar').map(r => r.item_id)
+      const trainingIds = regs.filter(r => r.type === 'training').map(r => r.item_id)
+
+      if (seminarIds.length > 0) {
+        const { data: seminars } = await supabase.from('seminars').select('id, title, date').in('id', seminarIds)
+        seminars?.forEach(s => { lookup[s.id] = { title: s.title, date: s.date ?? undefined } })
+      }
+      if (trainingIds.length > 0) {
+        const { data: trainings } = await supabase.from('trainings').select('id, title').in('id', trainingIds)
+        trainings?.forEach(t => { lookup[t.id] = { title: t.title } })
+      }
+
+      if (!isMounted) return
+
+      setRegistrations(regs)
+      setItemLookup(lookup)
+      setLoading(false)
+    }
+
+    void loadRegistrations()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   async function updateStatus(id: string, status: string) {

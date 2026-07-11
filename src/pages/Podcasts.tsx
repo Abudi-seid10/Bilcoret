@@ -47,7 +47,29 @@ export default function Podcasts() {
   }
 
   useEffect(() => {
-    void fetchPodcasts({ preserveLoadingState: true, preserveErrorState: true })
+    let isMounted = true
+
+    const loadPodcasts = async () => {
+      const { data, error } = await supabase
+        .from('podcasts')
+        .select('*')
+        .order('episode_number', { ascending: false })
+
+      if (!isMounted) return
+
+      if (error) {
+        setError(error.message)
+      } else {
+        setPodcasts(data ?? [])
+      }
+      setLoading(false)
+    }
+
+    void loadPodcasts()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return (

@@ -34,7 +34,22 @@ export default function AdminTrainings() {
   }
 
   useEffect(() => {
-    void fetchTrainings({ preserveLoadingState: true })
+    let isMounted = true
+
+    const loadTrainings = async () => {
+      const { data } = await supabase.from('trainings').select('*').order('created_at', { ascending: false })
+
+      if (!isMounted) return
+
+      setTrainings(data ?? [])
+      setLoading(false)
+    }
+
+    void loadTrainings()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   function openCreate() { setEditing(null); setForm(empty); setShowForm(true); setError('') }

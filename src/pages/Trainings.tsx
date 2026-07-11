@@ -49,7 +49,29 @@ export default function Trainings() {
   }
 
   useEffect(() => {
-    void fetchTrainings({ preserveLoadingState: true, preserveErrorState: true })
+    let isMounted = true
+
+    const loadTrainings = async () => {
+      const { data, error } = await supabase
+        .from('trainings')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (!isMounted) return
+
+      if (error) {
+        setError(error.message)
+      } else {
+        setTrainings(data ?? [])
+      }
+      setLoading(false)
+    }
+
+    void loadTrainings()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const displayed = filter === 'all' ? trainings : trainings.filter(t => t.status === filter)

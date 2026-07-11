@@ -33,7 +33,22 @@ export default function AdminSeminars() {
   }
 
   useEffect(() => {
-    void fetchSeminars({ preserveLoadingState: true })
+    let isMounted = true
+
+    const loadSeminars = async () => {
+      const { data } = await supabase.from('seminars').select('*').order('date', { ascending: false })
+
+      if (!isMounted) return
+
+      setSeminars(data ?? [])
+      setLoading(false)
+    }
+
+    void loadSeminars()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   function openCreate() { setEditing(null); setForm(empty); setShowForm(true); setError('') }

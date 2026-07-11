@@ -43,7 +43,29 @@ export default function Seminars() {
   }
 
   useEffect(() => {
-    void fetchSeminars({ preserveLoadingState: true, preserveErrorState: true })
+    let isMounted = true
+
+    const loadSeminars = async () => {
+      const { data, error } = await supabase
+        .from('seminars')
+        .select('*')
+        .order('date', { ascending: true })
+
+      if (!isMounted) return
+
+      if (error) {
+        setError(error.message)
+      } else {
+        setSeminars(data ?? [])
+      }
+      setLoading(false)
+    }
+
+    void loadSeminars()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const now = new Date()
