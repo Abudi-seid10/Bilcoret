@@ -28,9 +28,13 @@ export default function Trainings() {
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'ongoing' | 'self-paced'>('all')
   const [regModal, setRegModal] = useState<{ id: string; title: string } | null>(null)
 
-  async function fetchTrainings() {
-    setLoading(true)
-    setError(null)
+  async function fetchTrainings(options?: { preserveLoadingState?: boolean; preserveErrorState?: boolean }) {
+    if (!options?.preserveLoadingState) {
+      setLoading(true)
+    }
+    if (!options?.preserveErrorState) {
+      setError(null)
+    }
     const { data, error } = await supabase
       .from('trainings')
       .select('*')
@@ -44,7 +48,31 @@ export default function Trainings() {
     setLoading(false)
   }
 
-  useEffect(() => { fetchTrainings() }, [])
+  useEffect(() => {
+    let isMounted = true
+
+    const loadTrainings = async () => {
+      const { data, error } = await supabase
+        .from('trainings')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (!isMounted) return
+
+      if (error) {
+        setError(error.message)
+      } else {
+        setTrainings(data ?? [])
+      }
+      setLoading(false)
+    }
+
+    void loadTrainings()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const displayed = filter === 'all' ? trainings : trainings.filter(t => t.status === filter)
 

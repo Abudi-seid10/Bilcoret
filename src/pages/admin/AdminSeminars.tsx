@@ -23,14 +23,33 @@ export default function AdminSeminars() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  async function fetchSeminars() {
-    setLoading(true)
+  async function fetchSeminars(options?: { preserveLoadingState?: boolean }) {
+    if (!options?.preserveLoadingState) {
+      setLoading(true)
+    }
     const { data } = await supabase.from('seminars').select('*').order('date', { ascending: false })
     setSeminars(data ?? [])
     setLoading(false)
   }
 
-  useEffect(() => { fetchSeminars() }, [])
+  useEffect(() => {
+    let isMounted = true
+
+    const loadSeminars = async () => {
+      const { data } = await supabase.from('seminars').select('*').order('date', { ascending: false })
+
+      if (!isMounted) return
+
+      setSeminars(data ?? [])
+      setLoading(false)
+    }
+
+    void loadSeminars()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   function openCreate() { setEditing(null); setForm(empty); setShowForm(true); setError('') }
   function openEdit(s: Seminar) {

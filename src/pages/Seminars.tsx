@@ -22,9 +22,13 @@ export default function Seminars() {
   const [filter, setFilter] = useState<'upcoming' | 'past'>('upcoming')
   const [regModal, setRegModal] = useState<{ id: string; title: string } | null>(null)
 
-  async function fetchSeminars() {
-    setLoading(true)
-    setError(null)
+  async function fetchSeminars(options?: { preserveLoadingState?: boolean; preserveErrorState?: boolean }) {
+    if (!options?.preserveLoadingState) {
+      setLoading(true)
+    }
+    if (!options?.preserveErrorState) {
+      setError(null)
+    }
     const { data, error } = await supabase
       .from('seminars')
       .select('*')
@@ -38,7 +42,31 @@ export default function Seminars() {
     setLoading(false)
   }
 
-  useEffect(() => { fetchSeminars() }, [])
+  useEffect(() => {
+    let isMounted = true
+
+    const loadSeminars = async () => {
+      const { data, error } = await supabase
+        .from('seminars')
+        .select('*')
+        .order('date', { ascending: true })
+
+      if (!isMounted) return
+
+      if (error) {
+        setError(error.message)
+      } else {
+        setSeminars(data ?? [])
+      }
+      setLoading(false)
+    }
+
+    void loadSeminars()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const now = new Date()
   const displayed = seminars.filter(s =>
