@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/useAuth'
 import { LayoutDashboard, Calendar, Headphones, BookOpen, ClipboardList, LogOut, Menu, X, ExternalLink } from 'lucide-react'
 
 function LogoIcon({ className = '' }: { className?: string }) {

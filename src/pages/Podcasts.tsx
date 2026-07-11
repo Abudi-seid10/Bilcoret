@@ -26,9 +26,13 @@ export default function Podcasts() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  async function fetchPodcasts() {
-    setLoading(true)
-    setError(null)
+  async function fetchPodcasts(options?: { preserveLoadingState?: boolean; preserveErrorState?: boolean }) {
+    if (!options?.preserveLoadingState) {
+      setLoading(true)
+    }
+    if (!options?.preserveErrorState) {
+      setError(null)
+    }
     const { data, error } = await supabase
       .from('podcasts')
       .select('*')
@@ -42,7 +46,9 @@ export default function Podcasts() {
     setLoading(false)
   }
 
-  useEffect(() => { fetchPodcasts() }, [])
+  useEffect(() => {
+    void fetchPodcasts({ preserveLoadingState: true, preserveErrorState: true })
+  }, [])
 
   return (
     <div>

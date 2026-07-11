@@ -29,8 +29,10 @@ export default function AdminRegistrations() {
   const [search, setSearch] = useState('')
   const [updating, setUpdating] = useState<string | null>(null)
 
-  async function fetchRegistrations() {
-    setLoading(true)
+  async function fetchRegistrations(options?: { preserveLoadingState?: boolean }) {
+    if (!options?.preserveLoadingState) {
+      setLoading(true)
+    }
     const { data } = await supabase.from('registrations').select('*').order('created_at', { ascending: false })
     const regs = data ?? []
     setRegistrations(regs)
@@ -52,7 +54,9 @@ export default function AdminRegistrations() {
     setLoading(false)
   }
 
-  useEffect(() => { fetchRegistrations() }, [])
+  useEffect(() => {
+    void fetchRegistrations({ preserveLoadingState: true })
+  }, [])
 
   async function updateStatus(id: string, status: string) {
     setUpdating(id)
