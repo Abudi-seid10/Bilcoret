@@ -41,6 +41,9 @@ export default function RegistrationModal({ open, onClose, itemId, itemType, ite
         setErrorMsg(formatSupabaseErrorMessage(error.message))
       }
     } else {
+      supabase.functions.invoke('send-confirmation-email', {
+        body: { user_email: email, user_name: name, item_type: itemType, item_title: itemTitle },
+      }).catch(() => { /* email is best-effort; ignore failures */ })
       setStatus('success')
     }
   }
