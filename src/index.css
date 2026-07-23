@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bilcor-green: #004D34;
+  --color-bilcor-green-light: #006B49;
+  --color-bilcor-green-dark: #003522;
+  --color-bilcor-gold: #C6A15A;
+  --color-bilcor-gold-light: #D4B47A;
+  --color-bilcor-gold-dark: #B0884A;
+  --color-bilcor-charcoal: #212529;
+  --color-bilcor-offwhite: #F8F9FA;
+  --font-display: 'Montserrat', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+:root {
+  --bilcor-green: #004D34;
+  --bilcor-gold: #C6A15A;
+  --bilcor-charcoal: #212529;
+  --bilcor-offwhite: #F8F9FA;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: #212529;
+  background-color: #FFFFFF;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.tracking-label {
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid rgb(203 213 225);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  color: #212529;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus {
+  border-color: #004D34;
+}
