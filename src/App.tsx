@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Layout from './components/layout/Layout'
 import Home from './pages/Home'
@@ -17,6 +17,8 @@ import AdminPodcasts from './pages/admin/AdminPodcasts'
 import AdminTrainings from './pages/admin/AdminTrainings'
 import AdminRegistrations from './pages/admin/AdminRegistrations'
 import AdminBlogs from './pages/admin/AdminBlogs'
+import AdminSettings from './pages/admin/AdminSettings'
+import AdminEmailCampaign from './pages/admin/AdminEmailCampaign'
 import ProtectedRoute from './pages/admin/ProtectedRoute'
 
 export default function App() {
@@ -48,12 +50,15 @@ export default function App() {
               </ProtectedRoute>
             }
           >
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="seminars" element={<AdminSeminars />} />
             <Route path="podcasts" element={<AdminPodcasts />} />
             <Route path="trainings" element={<AdminTrainings />} />
             <Route path="registrations" element={<AdminRegistrations />} />
             <Route path="blogs" element={<AdminBlogs />} />
+            <Route path="settings" element={<AdminSettings />} />
+            <Route path="email-campaign" element={<AdminEmailCampaign />} />
           </Route>
         </Routes>
       </BrowserRouter>

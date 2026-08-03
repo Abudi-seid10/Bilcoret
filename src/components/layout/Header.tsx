@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
+import { supabase } from '../../lib/supabaseClient'
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -31,21 +32,37 @@ function LogoIcon({ className = '' }: { className?: string }) {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    supabase
+      .from('site_settings')
+      .select('logo_url')
+      .eq('id', '00000000-0000-0000-0000-000000000001')
+      .single()
+      .then(({ data }) => { if (data?.logo_url) setLogoUrl(data.logo_url) })
+  }, [])
 
   return (
     <header className="sticky top-0 z-50 bg-bilcor-green border-b border-bilcor-gold/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2.5 py-2">
-            <LogoIcon className="w-8 h-8" />
-            <div className="flex flex-col leading-none">
-              <span className="text-2xl font-extrabold text-white tracking-tight" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                Bilcor
-              </span>
-              <span className="text-[8px] text-bilcor-gold tracking-label font-medium mt-0.5">
-                Institute of Leadership
-              </span>
-            </div>
+            {logoUrl ? (
+              <img src={logoUrl} alt="Bilcor Logo" className="h-8 w-auto object-contain" />
+            ) : (
+              <>
+                <LogoIcon className="w-8 h-8" />
+                <div className="flex flex-col leading-none">
+                  <span className="text-2xl font-extrabold text-white tracking-tight" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                    Bilcor
+                  </span>
+                  <span className="text-[8px] text-bilcor-gold tracking-label font-medium mt-0.5">
+                    Institute of Leadership
+                  </span>
+                </div>
+              </>
+            )}
           </Link>
 
           <nav className="hidden md:flex items-center space-x-7">
