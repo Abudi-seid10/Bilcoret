@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { formatSupabaseErrorMessage } from '../../lib/formatSupabaseError'
-import { Headphones, User, Clock, Plus, Pencil, Trash2, X, Loader2 } from 'lucide-react'
+import { Headphones, User, Clock, Plus, Pencil, Trash2, X, Loader2, PlayCircle } from 'lucide-react'
 
 interface Podcast {
   id: string
@@ -9,12 +9,12 @@ interface Podcast {
   episode_number: number | null
   guest: string | null
   description: string | null
-  audio_url: string | null
+  youtube_url: string | null
   duration: number | null
   publish_date: string | null
 }
 
-const empty = { title: '', episode_number: '' as string, guest: '', description: '', audio_url: '', duration: '' as string, publish_date: '' }
+const empty = { title: '', episode_number: '' as string, guest: '', description: '', youtube_url: '', duration: '' as string, publish_date: '' }
 
 export default function AdminPodcasts() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([])
@@ -61,7 +61,7 @@ export default function AdminPodcasts() {
       episode_number: p.episode_number?.toString() ?? '',
       guest: p.guest ?? '',
       description: p.description ?? '',
-      audio_url: p.audio_url ?? '',
+      youtube_url: p.youtube_url ?? '',
       duration: p.duration?.toString() ?? '',
       publish_date: p.publish_date ? p.publish_date.slice(0, 10) : '',
     })
@@ -79,7 +79,7 @@ export default function AdminPodcasts() {
       episode_number: form.episode_number ? Number(form.episode_number) : null,
       guest: form.guest || null,
       description: form.description || null,
-      audio_url: form.audio_url || null,
+      youtube_url: form.youtube_url || null,
       duration: form.duration ? Number(form.duration) : null,
       publish_date: form.publish_date ? new Date(form.publish_date).toISOString() : null,
     }
@@ -142,7 +142,7 @@ export default function AdminPodcasts() {
                   <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-bilcor-charcoal/50 mt-0.5">
                     {p.guest && <span className="flex items-center gap-1"><User className="w-3 h-3" />{p.guest}</span>}
                     {p.duration && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatDuration(p.duration)}</span>}
-                    {p.audio_url && <span className="text-bilcor-green">Audio linked</span>}
+                    {p.youtube_url && <span className="flex items-center gap-1 text-red-500"><PlayCircle className="w-3 h-3" />YouTube</span>}
                   </div>
                 </div>
               </div>
@@ -189,8 +189,8 @@ export default function AdminPodcasts() {
                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} className="form-input" />
               </div>
               <div>
-                <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">Audio URL</label>
-                <input type="url" value={form.audio_url} onChange={e => setForm({ ...form, audio_url: e.target.value })} className="form-input" placeholder="https://..." />
+                <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">YouTube URL</label>
+                <input type="url" value={form.youtube_url} onChange={e => setForm({ ...form, youtube_url: e.target.value })} className="form-input" placeholder="https://youtube.com/watch?v=..." />
               </div>
               <div>
                 <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">Publish Date</label>
