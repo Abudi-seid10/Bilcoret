@@ -59,7 +59,11 @@ export default function App() {
             <Route path="blogs" element={<AdminBlogs />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="email-campaign" element={<AdminEmailCampaign />} />
+            <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
           </Route>
+
+          {/* Global fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
