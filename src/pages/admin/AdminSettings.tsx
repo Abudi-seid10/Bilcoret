@@ -4,6 +4,16 @@ import { Settings, Upload, Loader2, CheckCircle2 } from 'lucide-react'
 
 const SETTINGS_ID = '00000000-0000-0000-0000-000000000001'
 
+function safeImgSrc(url: string): string {
+  try {
+    const parsed = new URL(url)
+    if (parsed.protocol === 'https:' || parsed.protocol === 'http:') return url
+  } catch {
+    // fall through
+  }
+  return ''
+}
+
 export default function AdminSettings() {
   const [loading, setLoading] = useState(true)
   const [logoUrl, setLogoUrl] = useState('')
@@ -111,7 +121,7 @@ export default function AdminSettings() {
             <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-3 block">Logo</label>
             {logoUrl && (
               <div className="mb-3 p-3 bg-bilcor-offwhite border border-slate-200 inline-block" style={{ borderRadius: '4px' }}>
-                <img src={logoUrl} alt="Current logo" className="h-12 object-contain" />
+                <img src={safeImgSrc(logoUrl)} alt="Current logo" className="h-12 object-contain" />
               </div>
             )}
             <div className="flex flex-col sm:flex-row gap-3">
@@ -139,7 +149,7 @@ export default function AdminSettings() {
             <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-3 block">Favicon</label>
             {faviconUrl && (
               <div className="mb-3 p-3 bg-bilcor-offwhite border border-slate-200 inline-block" style={{ borderRadius: '4px' }}>
-                <img src={faviconUrl} alt="Current favicon" className="h-8 w-8 object-contain" />
+                <img src={safeImgSrc(faviconUrl)} alt="Current favicon" className="h-8 w-8 object-contain" />
               </div>
             )}
             <div className="flex flex-col sm:flex-row gap-3">
