@@ -92,7 +92,7 @@ serve(async (req: Request) => {
     })
   } catch (err) {
     console.error('[send-registration-email] Unexpected error:', err)
-    return new Response(JSON.stringify({ sent: false, error: String(err) }), {
+    return new Response(JSON.stringify({ sent: false, error: 'internal_error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
