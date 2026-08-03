@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { LayoutDashboard, Calendar, Headphones, BookOpen, ClipboardList, LogOut, Menu, X, ExternalLink, FileText } from 'lucide-react'
+import { LayoutDashboard, Calendar, Headphones, BookOpen, ClipboardList, LogOut, Menu, X, ExternalLink, FileText, Settings, Send } from 'lucide-react'
 
 function LogoIcon({ className = '' }: { className?: string }) {
   return (
@@ -27,6 +27,8 @@ const navItems = [
   { to: '/admin/trainings', label: 'Trainings', icon: BookOpen },
   { to: '/admin/registrations', label: 'Registrations', icon: ClipboardList },
   { to: '/admin/blogs', label: 'Blog Posts', icon: FileText },
+  { to: '/admin/email-campaign', label: 'Email Campaign', icon: Send },
+  { to: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
 export default function AdminLayout() {
