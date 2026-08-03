@@ -11,9 +11,10 @@ interface Podcast {
   audio_url: string | null
   duration: number | null
   publish_date: string | null
+  youtube_url: string | null
 }
 
-const empty = { title: '', episode_number: '' as string, guest: '', description: '', audio_url: '', duration: '' as string, publish_date: '' }
+const empty = { title: '', episode_number: '' as string, guest: '', description: '', audio_url: '', duration: '' as string, publish_date: '', youtube_url: '' }
 
 export default function AdminPodcasts() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([])
@@ -44,6 +45,7 @@ export default function AdminPodcasts() {
       audio_url: p.audio_url ?? '',
       duration: p.duration?.toString() ?? '',
       publish_date: p.publish_date ? p.publish_date.slice(0, 10) : '',
+      youtube_url: p.youtube_url ?? '',
     })
     setShowForm(true)
     setError('')
@@ -62,6 +64,7 @@ export default function AdminPodcasts() {
       audio_url: form.audio_url || null,
       duration: form.duration ? Number(form.duration) : null,
       publish_date: form.publish_date ? new Date(form.publish_date).toISOString() : null,
+      youtube_url: form.youtube_url || null,
     }
 
     const { error } = editing
@@ -122,7 +125,8 @@ export default function AdminPodcasts() {
                   <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-bilcor-charcoal/50 mt-0.5">
                     {p.guest && <span className="flex items-center gap-1"><User className="w-3 h-3" />{p.guest}</span>}
                     {p.duration && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatDuration(p.duration)}</span>}
-                    {p.audio_url && <span className="text-bilcor-green">Audio linked</span>}
+                    {p.youtube_url && <span className="text-red-500 font-medium">YouTube</span>}
+                    {p.audio_url && !p.youtube_url && <span className="text-bilcor-green">Audio linked</span>}
                   </div>
                 </div>
               </div>
@@ -171,6 +175,11 @@ export default function AdminPodcasts() {
               <div>
                 <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">Audio URL</label>
                 <input type="url" value={form.audio_url} onChange={e => setForm({ ...form, audio_url: e.target.value })} className="form-input" placeholder="https://..." />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">YouTube URL</label>
+                <input type="url" value={form.youtube_url} onChange={e => setForm({ ...form, youtube_url: e.target.value })} className="form-input" placeholder="https://youtube.com/watch?v=..." />
+                <p className="text-xs text-bilcor-charcoal/40 mt-1">When set, the thumbnail is shown on the public podcast page and clicking redirects to YouTube.</p>
               </div>
               <div>
                 <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">Publish Date</label>

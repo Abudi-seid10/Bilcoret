@@ -7,6 +7,7 @@ const navItems = [
   { to: '/seminars', label: 'Seminars' },
   { to: '/podcasts', label: 'Podcast' },
   { to: '/trainings', label: 'Trainings' },
+  { to: '/blog', label: 'Blog' },
   { to: '/about', label: 'About' },
   { to: '/portal', label: 'My Portal' },
 ]
