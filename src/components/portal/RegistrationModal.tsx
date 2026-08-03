@@ -27,6 +27,7 @@ export default function RegistrationModal({ open, onClose, itemId, itemType, ite
       .from('registrations')
       .insert({
         user_email: email,
+        user_name: name,
         type: itemType,
         item_id: itemId,
         status: 'pending',
@@ -40,6 +41,10 @@ export default function RegistrationModal({ open, onClose, itemId, itemType, ite
         setErrorMsg(error.message)
       }
     } else {
+      // Send confirmation email (best-effort — does not block success state)
+      supabase.functions.invoke('send-registration-email', {
+        body: { user_email: email, user_name: name, item_title: itemTitle, item_type: itemType },
+      }).catch(() => { /* ignore if function not deployed */ })
       setStatus('success')
     }
   }

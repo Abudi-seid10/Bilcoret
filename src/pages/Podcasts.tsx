@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Headphones, User, Clock, Play } from 'lucide-react'
+import { Headphones, User, Clock, Play, Video } from 'lucide-react'
 import LoadingSkeleton from '../components/ui/LoadingSkeleton'
 import ErrorMessage from '../components/ui/ErrorMessage'
 
@@ -13,6 +13,17 @@ interface Podcast {
   audio_url: string | null
   duration: number
   publish_date: string
+  youtube_url: string | null
+}
+
+function getYouTubeVideoId(url: string): string | null {
+  try {
+    const u = new URL(url)
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1)
+    return u.searchParams.get('v')
+  } catch {
+    return null
+  }
 }
 
 function formatDuration(seconds: number) {
@@ -71,12 +82,33 @@ export default function Podcasts() {
           </div>
         ) : (
           <div className="space-y-5">
-            {podcasts.map(ep => (
-              <div key={ep.id} className="bg-white border border-slate-200 p-6 hover:shadow-lg transition group" style={{ borderRadius: '4px' }}>
+            {podcasts.map(ep => {
+              const ytId = ep.youtube_url ? getYouTubeVideoId(ep.youtube_url) : null
+              const ytThumbnail = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : null
+              return (
+              <div key={ep.id} className="bg-white border border-slate-200 hover:shadow-lg transition group" style={{ borderRadius: '4px' }}>
+                {/* YouTube thumbnail (when available) */}
+                {ytThumbnail && (
+                  <a href={ep.youtube_url!} target="_blank" rel="noopener noreferrer" className="block relative overflow-hidden" style={{ borderRadius: '4px 4px 0 0' }}>
+                    <img
+                      src={ytThumbnail}
+                      alt={ep.title}
+                      className="w-full object-cover aspect-video group-hover:scale-105 transition duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                      <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center">
+                        <Video className="w-7 h-7 text-white" />
+                      </div>
+                    </div>
+                  </a>
+                )}
+                <div className="p-6">
                 <div className="flex gap-5">
-                  <div className="w-16 h-16 bg-bilcor-green flex items-center justify-center shrink-0" style={{ borderRadius: '4px' }}>
-                    <Headphones className="w-7 h-7 text-bilcor-gold" />
-                  </div>
+                  {!ytThumbnail && (
+                    <div className="w-16 h-16 bg-bilcor-green flex items-center justify-center shrink-0" style={{ borderRadius: '4px' }}>
+                      <Headphones className="w-7 h-7 text-bilcor-gold" />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs font-bold text-bilcor-gold tracking-label bg-bilcor-gold/10 px-2.5 py-0.5" style={{ borderRadius: '4px' }}>
@@ -94,21 +126,36 @@ export default function Podcasts() {
                     <p className="text-sm text-bilcor-charcoal/60 leading-relaxed line-clamp-2">{ep.description}</p>
                   </div>
                 </div>
-                {ep.audio_url && (
-                  <div className="mt-4 pt-4 border-t border-slate-100">
-                    <a
-                      href={ep.audio_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2 bg-bilcor-gold text-bilcor-green-dark text-sm font-bold uppercase tracking-wide hover:brightness-110 transition active:scale-95"
-                      style={{ borderRadius: '4px' }}
-                    >
-                      <Play className="w-4 h-4" /> Listen Now
-                    </a>
+                {(ep.youtube_url || ep.audio_url) && (
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex gap-3 flex-wrap">
+                    {ep.youtube_url && (
+                      <a
+                        href={ep.youtube_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-5 py-2 bg-red-600 text-white text-sm font-bold uppercase tracking-wide hover:brightness-110 transition active:scale-95"
+                        style={{ borderRadius: '4px' }}
+                      >
+                        <Video className="w-4 h-4" /> Watch on YouTube
+                      </a>
+                    )}
+                    {ep.audio_url && (
+                      <a
+                        href={ep.audio_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-5 py-2 bg-bilcor-gold text-bilcor-green-dark text-sm font-bold uppercase tracking-wide hover:brightness-110 transition active:scale-95"
+                        style={{ borderRadius: '4px' }}
+                      >
+                        <Play className="w-4 h-4" /> Listen Now
+                      </a>
+                    )}
                   </div>
                 )}
+                </div>
               </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
