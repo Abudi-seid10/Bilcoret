@@ -11,7 +11,7 @@ export default function Layout() {
       .select('logo_url, favicon_url')
       .eq('id', '00000000-0000-0000-0000-000000000001')
       .single()
-      .then(({ data }) => {
+      .then(({ data }: { data: { favicon_url?: string } | null }) => {
         if (data?.favicon_url) {
           let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
           if (!link) {

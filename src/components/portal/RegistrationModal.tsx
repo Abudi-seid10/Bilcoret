@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { sendRegistrationEmail } from '../../lib/emailService'
 import { X, Mail, User, CheckCircle2, Loader2 } from 'lucide-react'
 
 interface RegistrationModalProps {
@@ -41,10 +42,13 @@ export default function RegistrationModal({ open, onClose, itemId, itemType, ite
         setErrorMsg(error.message)
       }
     } else {
-      // Send confirmation email (best-effort — does not block success state)
-      supabase.functions.invoke('send-registration-email', {
-        body: { user_email: email, user_name: name, item_title: itemTitle, item_type: itemType },
-      }).catch(() => { /* ignore if function not deployed */ })
+      // Send confirmation email
+      sendRegistrationEmail({
+        user_email: email,
+        user_name: name,
+        item_title: itemTitle,
+        item_type: itemType,
+      })
       setStatus('success')
     }
   }

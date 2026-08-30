@@ -24,7 +24,6 @@ export default function AdminSeminars() {
   const [error, setError] = useState('')
 
   async function fetchSeminars() {
-    setLoading(true)
     const { data } = await supabase.from('seminars').select('*').order('date', { ascending: false })
     setSeminars(data ?? [])
     setLoading(false)

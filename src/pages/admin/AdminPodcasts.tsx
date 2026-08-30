@@ -26,7 +26,6 @@ export default function AdminPodcasts() {
   const [error, setError] = useState('')
 
   async function fetchPodcasts() {
-    setLoading(true)
     const { data } = await supabase.from('podcasts').select('*').order('episode_number', { ascending: false })
     setPodcasts(data ?? [])
     setLoading(false)

@@ -30,7 +30,6 @@ export default function AdminEmailCampaign() {
   const [error, setError] = useState('')
 
   async function fetchCampaigns() {
-    setLoading(true)
     const { data } = await supabase
       .from('email_campaigns')
       .select('id, subject, audience, sent_at, sent_count, created_at')

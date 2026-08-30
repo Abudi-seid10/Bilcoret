@@ -1,4 +1,5 @@
 import { Target, BookOpen, Mic, Heart, MapPin, Mail, ArrowRight } from 'lucide-react'
+import FAQSection from '../components/about/FAQSection'
 
 function LogoIcon({ className = '' }: { className?: string }) {
   return (
@@ -18,135 +19,146 @@ function LogoIcon({ className = '' }: { className?: string }) {
 }
 
 const team = [
-  { name: 'Dr. Amina Kebede', role: 'Co-Founder & Lead Facilitator', bio: 'Leadership coach with 15+ years helping executives unlock their potential.' },
-  { name: 'Samuel T.', role: 'Co-Founder & Strategy Director', bio: 'Strategy consultant focused on value creation in emerging markets.' },
-  { name: 'Helen M.', role: 'Head of Training Programs', bio: 'Communication expert and certified professional development trainer.' },
+  { name: 'Dr. Amina Kebede', role: 'Co-Founder & Lead Facilitator', bio: 'Executive coach with 15+ years advising C-suite leaders and development institutions.' },
+  { name: 'Samuel T.', role: 'Co-Founder & Strategy Director', bio: 'Strategy consultant specializing in economic governance and value creation.' },
+  { name: 'Helen M.', role: 'Head of Training Curricula', bio: 'Instructional designer and certified professional development master trainer.' },
 ]
 
 const values = [
-  { icon: Target, title: 'Purpose-Driven', desc: 'Every program is built around real outcomes, not vanity metrics.' },
-  { icon: BookOpen, title: 'Continuous Learning', desc: 'We believe growth is a lifelong practice, not a destination.' },
-  { icon: Mic, title: 'Authentic Voice', desc: 'We amplify honest conversations that drive genuine change.' },
-  { icon: Heart, title: 'Community First', desc: 'Our strength is in the relationships we build and sustain.' },
+  { icon: Target, title: 'Purpose-Driven', desc: 'Every program is built around measurable, high-impact organizational outcomes.' },
+  { icon: BookOpen, title: 'Academic Rigor', desc: 'Curricula derived from peer-reviewed leadership research and empirical science.' },
+  { icon: Mic, title: 'Authentic Voice', desc: 'Amplify candid, constructive dialogue that inspires real transformation.' },
+  { icon: Heart, title: 'Community Impact', desc: 'Fostering long-term relationships across East Africa’s professional ecosystem.' },
 ]
 
 export default function About() {
   return (
     <div>
-      {/* Hero — Deep Green */}
-      <section className="bg-bilcor-green text-white py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <LogoIcon className="w-16 h-16 mx-auto mb-6" />
-          <span className="text-bilcor-gold text-xs font-semibold tracking-label mb-3 block">About Us</span>
-          <h1 className="text-5xl font-black mb-6" style={{ fontFamily: 'Montserrat, sans-serif' }}>About Bilcor</h1>
-          <p className="text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
-            Institute of Leadership Coaching and Research — a knowledge-sharing platform dedicated to unlocking human potential through transformative seminars, insightful podcasts, and practical skill-building trainings.
+      {/* Hero Banner */}
+      <section className="bg-[#003826] text-white py-20 lg:py-28 border-b border-[#C6A15A]/20 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="w-16 h-16 mx-auto mb-6 p-2 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+            <LogoIcon className="w-12 h-12" />
+          </div>
+          <span className="text-[#C6A15A] text-xs font-bold uppercase tracking-wider mb-3 block">About Bilcor</span>
+          <h1 className="text-4xl md:text-5xl font-black mb-6" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            Bilcor Institute of Leadership
+          </h1>
+          <p className="text-lg text-slate-200 leading-relaxed max-w-2xl mx-auto">
+            A premier institute dedicated to advancing executive capability through research, executive seminars, podcasts, and accredited skills training.
           </p>
         </div>
       </section>
 
-      {/* Mission — White */}
-      <section className="bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      {/* Mission & Vision */}
+      <section className="bg-white py-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <span className="text-bilcor-gold text-xs font-semibold tracking-label mb-2 block">Our Mission</span>
-              <h2 className="text-3xl font-bold text-bilcor-green mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                From Insight to Impact
+            <div className="space-y-4">
+              <span className="text-[#C6A15A] text-xs font-bold uppercase tracking-wider block">Our Mission</span>
+              <h2 className="text-3xl font-black text-[#004D34]" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                Bridging Knowledge &amp; Executive Action
               </h2>
-              <p className="text-bilcor-charcoal/60 leading-relaxed mb-4">
-                We exist to bridge the gap between knowledge and action — creating programs that don't just inform, but transform. Every seminar, episode, and training module is designed to move people from insight to impact.
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Bilcor was established to solve a vital leadership challenge: transforming complex academic insights into practical, high-value execution for organizational leaders.
               </p>
-              <p className="text-bilcor-charcoal/60 leading-relaxed">
-                Founded in Addis Ababa with a vision to serve professionals across Africa and beyond, Bilcor believes that when people grow, communities thrive.
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Headquartered in Addis Ababa, Bilcor delivers cohort-based education, research publications, and interactive forums to professionals across East Africa.
               </p>
             </div>
-            <div className="bg-bilcor-offwhite border-l-[3px] border-bilcor-gold p-8" style={{ borderRadius: '0 4px 4px 0' }}>
-              <blockquote className="text-xl font-semibold text-bilcor-green italic leading-relaxed" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                "Knowledge without application is entertainment. We're here to make it transformational."
+
+            <div className="bg-slate-50 border-l-4 border-[#C6A15A] p-8 rounded-r-2xl shadow-sm space-y-4">
+              <blockquote className="text-lg font-bold text-[#004D34] italic leading-relaxed" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                "Knowledge without deliberate application remains potential. We provide the frameworks to turn potential into lasting value."
               </blockquote>
-              <p className="mt-4 text-sm text-bilcor-charcoal/40 font-medium">— Bilcor Founding Team</p>
+              <p className="text-xs text-slate-500 font-semibold">— Bilcor Executive Board</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Values — Off-white alternating */}
-      <section className="bg-bilcor-offwhite border-y border-slate-200/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center mb-14">
-            <span className="text-bilcor-gold text-xs font-semibold tracking-label mb-3 block">Our Values</span>
-            <h2 className="text-3xl font-bold text-bilcor-green mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>What We Stand For</h2>
-            <p className="text-bilcor-charcoal/50">The principles that guide every decision we make.</p>
+      {/* Core Values */}
+      <section className="bg-slate-50 py-20 border-y border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-[#C6A15A] text-xs font-bold uppercase tracking-wider block mb-2">Our Guiding Values</span>
+            <h2 className="text-3xl font-black text-[#004D34]" style={{ fontFamily: 'Montserrat, sans-serif' }}>Principles of Excellence</h2>
           </div>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white p-6 border border-slate-200 hover:shadow-lg transition" style={{ borderRadius: '4px' }}>
-                <div className="w-12 h-12 bg-bilcor-green flex items-center justify-center mb-4" style={{ borderRadius: '4px' }}>
-                  <Icon className="w-6 h-6 text-bilcor-gold" />
+              <div key={title} className="bg-white p-7 rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition">
+                <div className="w-12 h-12 rounded-lg bg-[#004D34] text-[#C6A15A] flex items-center justify-center mb-5">
+                  <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-bold text-bilcor-green mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h3>
-                <p className="text-sm text-bilcor-charcoal/60 leading-relaxed">{desc}</p>
+                <h3 className="font-bold text-[#004D34] text-lg mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>{title}</h3>
+                <p className="text-slate-600 text-xs leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Team — White */}
-      <section className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center mb-14">
-            <span className="text-bilcor-gold text-xs font-semibold tracking-label mb-3 block">Our Team</span>
-            <h2 className="text-3xl font-bold text-bilcor-green mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>The People Behind Bilcor</h2>
-            <p className="text-bilcor-charcoal/50">Passionate professionals committed to your growth.</p>
+      {/* Leadership Team */}
+      <section className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-[#C6A15A] text-xs font-bold uppercase tracking-wider block mb-2">Leadership Faculty</span>
+            <h2 className="text-3xl font-black text-[#004D34]" style={{ fontFamily: 'Montserrat, sans-serif' }}>Meet Our Team</h2>
           </div>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {team.map(member => (
-              <div key={member.name} className="bg-bilcor-offwhite border border-slate-200 p-6 hover:shadow-lg transition" style={{ borderRadius: '4px' }}>
-                <div className="w-14 h-14 bg-bilcor-green flex items-center justify-center mb-4" style={{ borderRadius: '4px' }}>
-                  <span className="text-bilcor-gold font-black text-lg" style={{ fontFamily: 'Montserrat, sans-serif' }}>{member.name.charAt(0)}</span>
+              <div key={member.name} className="bg-slate-50 border border-slate-200 rounded-xl p-7 hover:shadow-lg transition">
+                <div className="w-14 h-14 rounded-full bg-[#004D34] text-[#C6A15A] flex items-center justify-center font-black text-xl mb-4">
+                  {member.name.charAt(0)}
                 </div>
-                <h3 className="font-bold text-bilcor-green" style={{ fontFamily: 'Montserrat, sans-serif' }}>{member.name}</h3>
-                <p className="text-sm text-bilcor-gold font-semibold mb-2">{member.role}</p>
-                <p className="text-sm text-bilcor-charcoal/60 leading-relaxed">{member.bio}</p>
+                <h3 className="font-bold text-[#004D34] text-lg" style={{ fontFamily: 'Montserrat, sans-serif' }}>{member.name}</h3>
+                <p className="text-xs font-bold text-[#C6A15A] uppercase tracking-wider mb-3">{member.role}</p>
+                <p className="text-slate-600 text-xs leading-relaxed">{member.bio}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Contact CTA — Deep Green */}
-      <section className="bg-bilcor-green text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>Want to collaborate or learn more?</h2>
-          <p className="text-white/60 mb-8 text-lg">Reach out — we'd love to connect.</p>
-          <div className="flex flex-col gap-4 justify-center items-center">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <a
-                href="https://t.me/bilcoret"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-3.5 bg-bilcor-gold text-bilcor-green-dark font-bold uppercase text-sm tracking-wide hover:brightness-110 transition"
-                style={{ borderRadius: '4px' }}
-              >
-                Telegram <ArrowRight className="w-4 h-4" />
-              </a>
-              <a
-                href="mailto:contact@bilcoret.com"
-                className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-white/40 text-white font-bold uppercase text-sm tracking-wide hover:border-white transition"
-                style={{ borderRadius: '4px' }}
-              >
-                <Mail className="w-4 h-4" /> Email Us
-              </a>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-white/50 mt-2">
-              <MapPin className="w-4 h-4 text-bilcor-gold" />
-              Addis Ababa, Ethiopia
-            </div>
+      {/* FAQ Accordion Section */}
+      <FAQSection />
+
+      {/* Contact & Collaboration */}
+      <section className="bg-[#003826] text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
+          <h2 className="text-3xl sm:text-4xl font-black" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            Collaborate With Bilcor Institute
+          </h2>
+          <p className="text-slate-300 text-sm max-w-lg mx-auto">
+            Interested in corporate training cohorts, research partnerships, or keynote speaking? Get in touch with our executive team.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
+            <a
+              href="https://t.me/bilcoret"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#C6A15A] to-[#D4B47A] text-[#003826] font-black uppercase text-xs tracking-wider rounded-md hover:brightness-110 transition shadow-lg"
+            >
+              Join Telegram <ArrowRight className="w-4 h-4" />
+            </a>
+            <a
+              href="mailto:contact@bilcoret.com"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white/10 hover:bg-white/15 text-white font-bold uppercase text-xs tracking-wider rounded-md border border-white/20 transition"
+            >
+              <Mail className="w-4 h-4 text-[#C6A15A]" /> Email Executive Team
+            </a>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-300 pt-4">
+            <MapPin className="w-4 h-4 text-[#C6A15A]" />
+            Addis Ababa, Ethiopia · Serving Leaders Globally
           </div>
         </div>
       </section>
     </div>
   )
 }
+

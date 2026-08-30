@@ -16,9 +16,9 @@ interface ItemLookup {
 }
 
 const statusConfig: Record<string, { icon: typeof CheckCircle2; label: string; cls: string }> = {
-  pending: { icon: Hourglass, label: 'Pending', cls: 'bg-amber-100 text-amber-700' },
-  approved: { icon: CheckCircle2, label: 'Approved', cls: 'bg-green-100 text-green-700' },
-  rejected: { icon: XCircle, label: 'Rejected', cls: 'bg-red-100 text-red-700' },
+  pending: { icon: Hourglass, label: 'Under Review', cls: 'bg-amber-50 text-amber-700 border border-amber-200' },
+  approved: { icon: CheckCircle2, label: 'Registration Confirmed', cls: 'bg-emerald-50 text-emerald-800 border border-emerald-200' },
+  rejected: { icon: XCircle, label: 'Not Approved', cls: 'bg-rose-50 text-rose-700 border border-rose-200' },
 }
 
 export default function UserPortal() {
@@ -77,114 +77,122 @@ export default function UserPortal() {
 
   return (
     <div>
-      <section className="bg-bilcor-green text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="text-bilcor-gold text-xs font-semibold tracking-label mb-3 block">User Portal</span>
-          <h1 className="text-4xl md:text-5xl font-black mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-            My Registrations
+      {/* Banner */}
+      <section className="bg-[#003826] text-white py-16 lg:py-20 border-b border-[#C6A15A]/20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+          <span className="text-[#C6A15A] text-xs font-bold uppercase tracking-wider block">Participant Portal</span>
+          <h1 className="text-4xl md:text-5xl font-black" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            Registration Lookup
           </h1>
-          <p className="text-lg text-white/60 max-w-xl mx-auto leading-relaxed">
-            Enter your email to view your seminar and training registration status.
+          <p className="text-base text-slate-200 max-w-xl mx-auto leading-relaxed">
+            Enter your email address below to review your seminar seats and training cohort status.
           </p>
         </div>
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Search */}
-        <form onSubmit={handleSearch} className="mb-10">
-          <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-2 block">
-            Email Address
-          </label>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-bilcor-charcoal/30" />
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                className="w-full pl-10 pr-3 py-3 border border-slate-300 focus:outline-none focus:border-bilcor-green text-sm transition"
-                style={{ borderRadius: '4px' }}
-                placeholder="jane@example.com"
-              />
+        {/* Search Card */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-10">
+          <form onSubmit={handleSearch} className="space-y-4">
+            <label className="text-xs font-bold uppercase tracking-wider text-[#004D34] block">
+              Registered Email Address
+            </label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:outline-none focus:border-[#004D34] transition"
+                  placeholder="e.g. executive@organization.com"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-[#004D34] hover:bg-[#003826] text-white font-bold uppercase text-xs tracking-wider rounded-lg transition disabled:opacity-60 shadow-xs"
+              >
+                <Search className="w-4 h-4 text-[#C6A15A]" /> {loading ? 'Searching...' : 'Search Status'}
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-bilcor-green text-white font-bold uppercase text-sm tracking-wide hover:bg-bilcor-green-light transition disabled:opacity-60"
-              style={{ borderRadius: '4px' }}
-            >
-              <Search className="w-4 h-4" /> {loading ? 'Searching...' : 'Look Up'}
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
 
         {/* Results */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 mb-6" style={{ borderRadius: '4px' }}>
+          <div className="bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium px-4 py-3.5 rounded-xl mb-6">
             {error}
           </div>
         )}
 
         {searched && !loading && registrations.length === 0 && !error && (
-          <div className="text-center py-16 text-bilcor-charcoal/40">
-            <Mail className="w-12 h-12 mx-auto mb-4 text-bilcor-green/20" />
-            <p className="text-lg font-semibold text-bilcor-charcoal/60" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              No registrations found
+          <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+            <Mail className="w-12 h-12 mx-auto mb-3 text-[#004D34]/30" />
+            <p className="text-lg font-bold text-[#004D34]" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              No Registrations Found
             </p>
-            <p className="text-sm mt-1">We couldn't find any registrations for {email}.</p>
+            <p className="text-xs text-slate-500 mt-1">We couldn't locate any active registrations for <span className="font-semibold">{email}</span>.</p>
           </div>
         )}
 
         {registrations.length > 0 && (
-          <div>
-            <h2 className="text-lg font-bold text-bilcor-green mb-4" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-              {registrations.length} Registration{registrations.length > 1 ? 's' : ''}
-            </h2>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <h2 className="text-lg font-bold text-[#004D34]" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                Your Registrations ({registrations.length})
+              </h2>
+              <span className="text-xs text-slate-500 font-medium">Verified Records</span>
+            </div>
+
             <div className="space-y-4">
               {registrations.map(reg => {
                 const item = itemLookup[reg.item_id]
                 const cfg = statusConfig[reg.status] ?? statusConfig.pending
                 const StatusIcon = cfg.icon
+
                 return (
-                  <div key={reg.id} className="bg-white border border-slate-200 p-5 hover:shadow-md transition" style={{ borderRadius: '4px' }}>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-4 flex-1 min-w-0">
-                        <div className="w-11 h-11 bg-bilcor-green/10 flex items-center justify-center shrink-0" style={{ borderRadius: '4px' }}>
+                  <div key={reg.id} className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md transition">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-start gap-4 flex-1">
+                        <div className="w-12 h-12 rounded-lg bg-[#004D34]/10 text-[#004D34] flex items-center justify-center shrink-0">
                           {reg.type === 'seminar' ? (
-                            <Calendar className="w-5 h-5 text-bilcor-green" />
+                            <Calendar className="w-6 h-6 text-[#C6A15A]" />
                           ) : (
-                            <BookOpen className="w-5 h-5 text-bilcor-green" />
+                            <BookOpen className="w-6 h-6 text-[#C6A15A]" />
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <span className="text-xs font-bold uppercase tracking-wide text-bilcor-gold mb-1 block">
+
+                        <div className="space-y-1 min-w-0 flex-1">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#C6A15A] block">
                             {reg.type}
                           </span>
-                          <h3 className="font-bold text-bilcor-green truncate" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                            {item?.title ?? 'Item no longer available'}
+                          <h3 className="font-bold text-[#004D34] text-base truncate" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                            {item?.title ?? 'Item Record'}
                           </h3>
-                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-bilcor-charcoal/50 mt-1">
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 pt-1">
                             {item?.date && (
                               <span className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3" />
+                                <Calendar className="w-3.5 h-3.5 text-slate-400" />
                                 {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                               </span>
                             )}
                             {item?.instructor && (
                               <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {item.instructor}
+                                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                Instructor: {item.instructor}
                               </span>
                             )}
-                            <span className="flex items-center gap-1">
-                              Registered {new Date(reg.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            <span className="text-slate-400">
+                              Registered: {new Date(reg.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide shrink-0 flex items-center gap-1.5 ${cfg.cls}`} style={{ borderRadius: '4px' }}>
-                        <StatusIcon className="w-3.5 h-3.5" />
+
+                      <span className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg shrink-0 flex items-center gap-2 ${cfg.cls}`}>
+                        <StatusIcon className="w-4 h-4 shrink-0" />
                         {cfg.label}
                       </span>
                     </div>
@@ -198,3 +206,4 @@ export default function UserPortal() {
     </div>
   )
 }
+

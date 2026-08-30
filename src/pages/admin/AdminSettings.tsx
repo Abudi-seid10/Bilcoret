@@ -25,7 +25,6 @@ export default function AdminSettings() {
   const [error, setError] = useState('')
 
   async function fetchSettings() {
-    setLoading(true)
     const { data } = await supabase
       .from('site_settings')
       .select('*')

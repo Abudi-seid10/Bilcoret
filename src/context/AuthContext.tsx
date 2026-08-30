@@ -25,29 +25,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      if (data.session) {
-        checkAdmin(data.session.user.id)
-      } else {
-        setLoading(false)
-      }
-    })
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, sess) => {
-      setSession(sess)
-      if (sess) {
-        checkAdmin(sess.user.id)
-      } else {
-        setAdminProfile(null)
-        setLoading(false)
-      }
-    })
-
-    return () => { listener.subscription.unsubscribe() }
-  }, [])
-
   async function checkAdmin(userId: string) {
     setLoading(true)
     const { data } = await supabase
@@ -59,6 +36,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAdminProfile(data as AdminProfile | null)
     setLoading(false)
   }
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
+      setSession(data.session)
+      if (data.session) {
+        checkAdmin(data.session.user.id)
+      } else {
+        setLoading(false)
+      }
+    })
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event: string, sess: Session | null) => {
+      setSession(sess)
+      if (sess) {
+        checkAdmin(sess.user.id)
+      } else {
+        setAdminProfile(null)
+        setLoading(false)
+      }
+    })
+
+    return () => { listener.subscription.unsubscribe() }
+  }, [])
 
   async function signIn(email: string, password: string) {
     const { error } = await supabase.auth.signInWithPassword({ email, password })

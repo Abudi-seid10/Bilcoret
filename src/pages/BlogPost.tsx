@@ -14,6 +14,8 @@ interface BlogPost {
   author: string | null
   created_at: string
   updated_at: string
+  cover_image?: string | null
+  images?: string[] | null
 }
 
 export default function BlogPost() {
@@ -36,7 +38,16 @@ export default function BlogPost() {
       if (error || !data) {
         setNotFound(true)
       } else {
-        setPost(data)
+        let mediaStore: Record<string, { cover_image?: string | null; images?: string[] | null }> = {}
+        try {
+          mediaStore = JSON.parse(localStorage.getItem('bilcor_blog_media_store') || '{}')
+        } catch {}
+
+        const stored = mediaStore[data.slug] || mediaStore[data.id] || {}
+        const cover_image = data.cover_image || stored.cover_image || (stored.images && stored.images[0]) || null
+        const images = data.images || stored.images || (cover_image ? [cover_image] : [])
+
+        setPost({ ...data, cover_image, images })
         // Update document title and meta description for SEO
         document.title = data.seo_title ?? data.title
         const metaDesc = document.querySelector('meta[name="description"]')
@@ -107,7 +118,12 @@ export default function BlogPost() {
         </div>
       </section>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {post.cover_image && (
+          <div className="mb-10 rounded-2xl overflow-hidden shadow-lg border border-slate-200">
+            <img src={post.cover_image} alt={post.title} className="w-full h-80 md:h-96 object-cover" />
+          </div>
+        )}
         {post.excerpt && (
           <p className="text-lg text-bilcor-charcoal/70 leading-relaxed mb-8 font-medium border-l-4 border-bilcor-gold pl-5">
             {post.excerpt}

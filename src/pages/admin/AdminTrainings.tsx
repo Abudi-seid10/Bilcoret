@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
-import { BookOpen, User, Clock, DollarSign, Plus, Pencil, Trash2, X, Loader2 } from 'lucide-react'
+import { BookOpen, User, Clock, Plus, Pencil, Trash2, X, Loader2 } from 'lucide-react'
 
 interface Training {
   id: string
@@ -25,7 +25,6 @@ export default function AdminTrainings() {
   const [error, setError] = useState('')
 
   async function fetchTrainings() {
-    setLoading(true)
     const { data } = await supabase.from('trainings').select('*').order('created_at', { ascending: false })
     setTrainings(data ?? [])
     setLoading(false)
@@ -112,7 +111,7 @@ export default function AdminTrainings() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide ${statusCls[t.status]}`} style={{ borderRadius: '4px' }}>{t.status === 'self-paced' ? 'Self-Paced' : t.status.charAt(0).toUpperCase() + t.status.slice(1)}</span>
-                  {t.price != null && <span className="text-sm font-bold text-bilcor-green flex items-center gap-0.5"><DollarSign className="w-3.5 h-3.5" />{t.price.toFixed(2)}</span>}
+                  {t.price != null && <span className="text-sm font-bold text-bilcor-green">ETB {t.price.toLocaleString()}</span>}
                 </div>
                 <h3 className="font-bold text-bilcor-green truncate" style={{ fontFamily: 'Montserrat, sans-serif' }}>{t.title}</h3>
                 <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-bilcor-charcoal/50 mt-0.5">
@@ -160,8 +159,8 @@ export default function AdminTrainings() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">Price (USD)</label>
-                  <input type="number" step="0.01" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} className="form-input" />
+                  <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">Price (ETB)</label>
+                  <input type="number" step="any" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} className="form-input" placeholder="e.g. 4500" />
                 </div>
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wide text-bilcor-charcoal/50 mb-1.5 block">Status</label>

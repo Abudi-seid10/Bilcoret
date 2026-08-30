@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { sendStatusEmail } from '../../lib/emailService'
 import { ClipboardList, Mail, Calendar, BookOpen, CheckCircle2, XCircle, Hourglass, Trash2, Search, ChevronDown, ChevronUp, Users } from 'lucide-react'
 
 interface Registration {
@@ -39,8 +40,6 @@ export default function AdminRegistrations() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
 
   async function fetchRegistrations() {
-    setLoading(true)
-
     const { data: regs } = await supabase
       .from('registrations')
       .select('*')
@@ -56,13 +55,13 @@ export default function AdminRegistrations() {
 
     if (seminarIds.length > 0) {
       const { data: seminars } = await supabase.from('seminars').select('id, title, date').in('id', seminarIds)
-      seminars?.forEach(s => {
+      seminars?.forEach((s: { id: string; title: string; date?: string }) => {
         itemMap[s.id] = { id: s.id, title: s.title, date: s.date ?? undefined, type: 'seminar' }
       })
     }
     if (trainingIds.length > 0) {
       const { data: trainings } = await supabase.from('trainings').select('id, title').in('id', trainingIds)
-      trainings?.forEach(t => {
+      trainings?.forEach((t: { id: string; title: string }) => {
         itemMap[t.id] = { id: t.id, title: t.title, type: 'training' }
       })
     }
@@ -98,9 +97,21 @@ export default function AdminRegistrations() {
 
   useEffect(() => { fetchRegistrations() }, [])
 
-  async function updateStatus(id: string, status: string) {
-    setUpdating(id)
-    await supabase.from('registrations').update({ status }).eq('id', id)
+  async function updateStatus(reg: Registration, item: EventItem, status: string) {
+    if (reg.status === status) return
+    setUpdating(reg.id)
+    await supabase.from('registrations').update({ status }).eq('id', reg.id)
+
+    if (status === 'approved' || status === 'rejected') {
+      sendStatusEmail({
+        user_email: reg.user_email,
+        user_name: reg.user_name,
+        item_title: item.title,
+        item_type: item.type,
+        status,
+      })
+    }
+
     setUpdating(null)
     fetchRegistrations()
   }
@@ -261,7 +272,7 @@ export default function AdminRegistrations() {
                             {statusActions.map(({ value, label, icon: Icon, cls }) => (
                               <button
                                 key={value}
-                                onClick={() => updateStatus(reg.id, value)}
+                                onClick={() => updateStatus(reg, group.item, value)}
                                 disabled={updating === reg.id}
                                 className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition disabled:opacity-50 ${
                                   reg.status === value ? cls : 'bg-slate-50 text-bilcor-charcoal/30 hover:bg-slate-100'

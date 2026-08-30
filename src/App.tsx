@@ -19,6 +19,8 @@ import AdminRegistrations from './pages/admin/AdminRegistrations'
 import AdminBlogs from './pages/admin/AdminBlogs'
 import AdminSettings from './pages/admin/AdminSettings'
 import AdminEmailCampaign from './pages/admin/AdminEmailCampaign'
+import AdminHighlights from './pages/admin/AdminHighlights'
+import AdminFAQs from './pages/admin/AdminFAQs'
 import ProtectedRoute from './pages/admin/ProtectedRoute'
 
 export default function App() {
@@ -52,6 +54,8 @@ export default function App() {
           >
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="highlights" element={<AdminHighlights />} />
+            <Route path="faqs" element={<AdminFAQs />} />
             <Route path="seminars" element={<AdminSeminars />} />
             <Route path="podcasts" element={<AdminPodcasts />} />
             <Route path="trainings" element={<AdminTrainings />} />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
-import { Calendar, Headphones, BookOpen, ClipboardList, ArrowRight, TrendingUp, Hourglass, CheckCircle2 } from 'lucide-react'
+import { Calendar, Headphones, BookOpen, ClipboardList, ArrowRight, TrendingUp, Hourglass, CheckCircle2, Sparkles, HelpCircle } from 'lucide-react'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ seminars: 0, podcasts: 0, trainings: 0, registrations: 0, pending: 0, approved: 0 })
@@ -23,8 +23,8 @@ export default function AdminDashboard() {
         podcasts: p.count ?? 0,
         trainings: t.count ?? 0,
         registrations: regs.length,
-        pending: regs.filter(x => x.status === 'pending').length,
-        approved: regs.filter(x => x.status === 'approved').length,
+        pending: regs.filter((x: { status: string }) => x.status === 'pending').length,
+        approved: regs.filter((x: { status: string }) => x.status === 'approved').length,
       })
       setRecentRegs(regs.slice(0, 5).map((x: { id: string; user_email: string; type: string; status: string; created_at: string }) => ({ id: x.id, user_email: x.user_email, type: x.type, status: x.status, created_at: x.created_at })))
       setLoading(false)
@@ -33,11 +33,14 @@ export default function AdminDashboard() {
   }, [])
 
   const cards = [
+    { label: 'Highlights', value: 'Manage', icon: Sparkles, to: '/admin/highlights', color: 'text-bilcor-green' },
+    { label: 'FAQs', value: 'Manage', icon: HelpCircle, to: '/admin/faqs', color: 'text-bilcor-green' },
     { label: 'Seminars', value: stats.seminars, icon: Calendar, to: '/admin/seminars', color: 'text-bilcor-green' },
     { label: 'Podcasts', value: stats.podcasts, icon: Headphones, to: '/admin/podcasts', color: 'text-bilcor-green' },
     { label: 'Trainings', value: stats.trainings, icon: BookOpen, to: '/admin/trainings', color: 'text-bilcor-green' },
     { label: 'Registrations', value: stats.registrations, icon: ClipboardList, to: '/admin/registrations', color: 'text-bilcor-green' },
   ]
+
 
   if (loading) {
     return <div className="animate-pulse space-y-6">
@@ -56,7 +59,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
         {cards.map(({ label, value, icon: Icon, to }) => (
           <Link
             key={label}
