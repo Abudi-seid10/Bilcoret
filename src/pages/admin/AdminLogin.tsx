@@ -64,22 +64,10 @@ export default function AdminLogin() {
             >
               Sign In
             </button>
-            <button
-              onClick={() => { setMode('signup'); setError('') }}
-              className={`flex-1 pb-3 text-sm font-bold uppercase tracking-wide transition ${
-                mode === 'signup' ? 'text-bilcor-green border-b-2 border-bilcor-green' : 'text-bilcor-charcoal/40 hover:text-bilcor-charcoal/60'
-              }`}
-            >
-              Create Account
-            </button>
+            
           </div>
 
-          <div className="flex items-center gap-2 bg-bilcor-offwhite border border-bilcor-gold/20 px-4 py-2.5 mb-6" style={{ borderRadius: '4px' }}>
-            <ShieldCheck className="w-4 h-4 text-bilcor-gold shrink-0" />
-            <p className="text-xs text-bilcor-charcoal/60">
-              Admin access is auto-granted for designated emails only.
-            </p>
-          </div>
+          
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
