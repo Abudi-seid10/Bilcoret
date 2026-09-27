@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { Calendar, MapPin, Mic, ExternalLink, UserPlus, Search } from 'lucide-react'
+import { Calendar, MapPin, Mic, ExternalLink, UserPlus, Search, Users } from 'lucide-react'
 import LoadingSkeleton from '../components/ui/LoadingSkeleton'
 import ErrorMessage from '../components/ui/ErrorMessage'
 import RegistrationModal from '../components/portal/RegistrationModal'
@@ -13,15 +13,17 @@ interface Seminar {
   date: string
   location: string
   registration_link: string | null
+  max_registrations?: number | null
 }
 
 export default function Seminars() {
   const [seminars, setSeminars] = useState<Seminar[]>([])
+  const [regCounts, setRegCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<'upcoming' | 'past'>('upcoming')
   const [searchQuery, setSearchQuery] = useState('')
-  const [regModal, setRegModal] = useState<{ id: string; title: string } | null>(null)
+  const [regModal, setRegModal] = useState<{ id: string; title: string; maxCapacity?: number | null; count?: number } | null>(null)
 
   async function fetchSeminars() {
     setLoading(true)
@@ -34,7 +36,21 @@ export default function Seminars() {
     if (error) {
       setError(error.message)
     } else {
-      setSeminars(data ?? [])
+      const list: Seminar[] = data ?? []
+      setSeminars(list)
+
+      if (list.length > 0) {
+        const ids = list.map(s => s.id)
+        const { data: regs } = await supabase.from('registrations').select('item_id, status').in('item_id', ids)
+        const counts: Record<string, number> = {}
+        ids.forEach(id => counts[id] = 0)
+        regs?.forEach((r: { item_id: string; status: string }) => {
+          if (r.status === 'approved' || r.status === 'pending') {
+            counts[r.item_id] = (counts[r.item_id] || 0) + 1
+          }
+        })
+        setRegCounts(counts)
+      }
     }
     setLoading(false)
   }
@@ -113,70 +129,85 @@ export default function Seminars() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayed.map(seminar => (
-              <div key={seminar.id} className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-xl transition group flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#004D34]/10 text-[#004D34] text-xs font-bold uppercase tracking-wider">
-                      <Calendar className="w-3.5 h-3.5 text-[#C6A15A]" />
-                      {new Date(seminar.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                    {filter === 'past' && (
-                      <span className="px-2.5 py-0.5 bg-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 rounded">Past</span>
-                    )}
+            {displayed.map(seminar => {
+              const currentCount = regCounts[seminar.id] || 0
+              const maxCap = seminar.max_registrations
+              const isFull = maxCap != null && currentCount >= maxCap
+
+              return (
+                <div key={seminar.id} className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-xl transition group flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-4">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#004D34]/10 text-[#004D34] text-xs font-bold uppercase tracking-wider">
+                        <Calendar className="w-3.5 h-3.5 text-[#C6A15A]" />
+                        {new Date(seminar.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                      {maxCap != null && (
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider ${
+                          isFull ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800'
+                        }`}>
+                          <Users className="w-3 h-3" />
+                          {isFull ? 'Fully Booked' : `${currentCount}/${maxCap} Seats`}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-xl font-bold text-[#004D34] group-hover:text-[#C6A15A] transition mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                      {seminar.title}
+                    </h3>
+                    
+                    <p className="text-slate-600 text-xs leading-relaxed mb-6 line-clamp-3">
+                      {seminar.description}
+                    </p>
+
+                    <div className="space-y-2 text-xs text-slate-500 font-medium mb-6 pt-4 border-t border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <Mic className="w-4 h-4 text-[#C6A15A] shrink-0" />
+                        <span className="font-bold text-slate-700">{seminar.speaker}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-[#C6A15A] shrink-0" />
+                        <span>{seminar.location}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <h3 className="text-xl font-bold text-[#004D34] group-hover:text-[#C6A15A] transition mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                    {seminar.title}
-                  </h3>
-                  
-                  <p className="text-slate-600 text-xs leading-relaxed mb-6 line-clamp-3">
-                    {seminar.description}
-                  </p>
-
-                  <div className="space-y-2 text-xs text-slate-500 font-medium mb-6 pt-4 border-t border-slate-100">
-                    <div className="flex items-center gap-2">
-                      <Mic className="w-4 h-4 text-[#C6A15A] shrink-0" />
-                      <span className="font-bold text-slate-700">{seminar.speaker}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[#C6A15A] shrink-0" />
-                      <span>{seminar.location}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {filter === 'upcoming' ? (
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <button
-                      onClick={() => setRegModal({ id: seminar.id, title: seminar.title })}
-                      className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#004D34] hover:bg-[#003826] text-white text-xs font-bold uppercase tracking-wider rounded-lg transition active:scale-95 shadow-xs"
-                    >
-                      <UserPlus className="w-4 h-4 text-[#C6A15A]" /> Reserve Seat
-                    </button>
-                    {seminar.registration_link && (
-                      <a
-                        href={seminar.registration_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 px-4 py-3 border border-slate-300 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:border-[#004D34] hover:text-[#004D34] transition"
+                  {filter === 'upcoming' ? (
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <button
+                        onClick={() => setRegModal({ id: seminar.id, title: seminar.title, maxCapacity: maxCap, count: currentCount })}
+                        disabled={isFull}
+                        className={`flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-bold uppercase tracking-wider rounded-lg transition active:scale-95 shadow-xs ${
+                          isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed' : 'bg-[#004D34] hover:bg-[#003826] text-white'
+                        }`}
                       >
-                        Details <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
-                    )}
-                  </div>
-                ) : (
-                  <a
-                    href={seminar.registration_link ?? '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#C6A15A] hover:bg-[#d4b47a] text-[#003826] text-xs font-black uppercase tracking-wider rounded-lg transition"
-                  >
-                    Watch Replay <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
-              </div>
-            ))}
+                        <UserPlus className="w-4 h-4 text-[#C6A15A]" />
+                        {isFull ? 'Seats Full' : 'Reserve Seat'}
+                      </button>
+                      {seminar.registration_link && (
+                        <a
+                          href={seminar.registration_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 px-4 py-3 border border-slate-300 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:border-[#004D34] hover:text-[#004D34] transition"
+                        >
+                          Details <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <a
+                      href={seminar.registration_link ?? '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#C6A15A] hover:bg-[#d4b47a] text-[#003826] text-xs font-black uppercase tracking-wider rounded-lg transition"
+                    >
+                      Watch Replay <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
@@ -187,8 +218,9 @@ export default function Seminars() {
         itemId={regModal?.id ?? ''}
         itemType="seminar"
         itemTitle={regModal?.title ?? ''}
+        maxCapacity={regModal?.maxCapacity}
+        currentCount={regModal?.count}
       />
     </div>
   )
 }
-

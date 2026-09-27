@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { BookOpen, User, Clock, ArrowRight, UserPlus, Search } from 'lucide-react'
+import { BookOpen, User, Clock, ArrowRight, UserPlus, Search, Users } from 'lucide-react'
 import LoadingSkeleton from '../components/ui/LoadingSkeleton'
 import ErrorMessage from '../components/ui/ErrorMessage'
 import RegistrationModal from '../components/portal/RegistrationModal'
@@ -13,6 +13,7 @@ interface Training {
   duration: string
   price: number
   status: 'upcoming' | 'ongoing' | 'self-paced'
+  max_registrations?: number | null
 }
 
 const statusConfig = {
@@ -23,11 +24,12 @@ const statusConfig = {
 
 export default function Trainings() {
   const [trainings, setTrainings] = useState<Training[]>([])
+  const [regCounts, setRegCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'ongoing' | 'self-paced'>('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [regModal, setRegModal] = useState<{ id: string; title: string } | null>(null)
+  const [regModal, setRegModal] = useState<{ id: string; title: string; maxCapacity?: number | null; count?: number } | null>(null)
 
   async function fetchTrainings() {
     setLoading(true)
@@ -40,7 +42,21 @@ export default function Trainings() {
     if (error) {
       setError(error.message)
     } else {
-      setTrainings(data ?? [])
+      const list: Training[] = data ?? []
+      setTrainings(list)
+
+      if (list.length > 0) {
+        const ids = list.map(t => t.id)
+        const { data: regs } = await supabase.from('registrations').select('item_id, status').in('item_id', ids)
+        const counts: Record<string, number> = {}
+        ids.forEach(id => counts[id] = 0)
+        regs?.forEach((r: { item_id: string; status: string }) => {
+          if (r.status === 'approved' || r.status === 'pending') {
+            counts[r.item_id] = (counts[r.item_id] || 0) + 1
+          }
+        })
+        setRegCounts(counts)
+      }
     }
     setLoading(false)
   }
@@ -120,10 +136,14 @@ export default function Trainings() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayed.map(training => {
               const cfg = statusConfig[training.status] ?? statusConfig['self-paced']
+              const currentCount = regCounts[training.id] || 0
+              const maxCap = training.max_registrations
+              const isFull = maxCap != null && currentCount >= maxCap
+
               return (
                 <div key={training.id} className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-xl transition group flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between gap-2 mb-4">
                       <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${cfg.cls}`}>
                         {cfg.label}
                       </span>
@@ -132,8 +152,18 @@ export default function Trainings() {
                       </span>
                     </div>
 
-                    <div className="w-12 h-12 rounded-lg bg-[#004D34] text-[#C6A15A] flex items-center justify-center mb-4">
-                      <BookOpen className="w-6 h-6" />
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-12 h-12 rounded-lg bg-[#004D34] text-[#C6A15A] flex items-center justify-center">
+                        <BookOpen className="w-6 h-6" />
+                      </div>
+                      {maxCap != null && (
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider ${
+                          isFull ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800'
+                        }`}>
+                          <Users className="w-3 h-3" />
+                          {isFull ? 'Cohort Full' : `${currentCount}/${maxCap} Seats`}
+                        </span>
+                      )}
                     </div>
 
                     <h3 className="text-lg font-bold text-[#004D34] group-hover:text-[#C6A15A] transition mb-3" style={{ fontFamily: 'Montserrat, sans-serif' }}>
@@ -157,10 +187,14 @@ export default function Trainings() {
                   </div>
 
                   <button
-                    onClick={() => setRegModal({ id: training.id, title: training.title })}
-                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#C6A15A] hover:bg-[#d4b47a] text-[#003826] font-black uppercase text-xs tracking-wider rounded-lg transition active:scale-95 shadow-xs"
+                    onClick={() => setRegModal({ id: training.id, title: training.title, maxCapacity: maxCap, count: currentCount })}
+                    disabled={isFull}
+                    className={`w-full inline-flex items-center justify-center gap-2 px-5 py-3 font-black uppercase text-xs tracking-wider rounded-lg transition active:scale-95 shadow-xs ${
+                      isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed' : 'bg-[#C6A15A] hover:bg-[#d4b47a] text-[#003826]'
+                    }`}
                   >
-                    <UserPlus className="w-4 h-4" /> Enroll In Cohort <ArrowRight className="w-4 h-4" />
+                    <UserPlus className="w-4 h-4" />
+                    {isFull ? 'Cohort Full' : 'Enroll In Cohort'} <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               )
@@ -175,8 +209,9 @@ export default function Trainings() {
         itemId={regModal?.id ?? ''}
         itemType="training"
         itemTitle={regModal?.title ?? ''}
+        maxCapacity={regModal?.maxCapacity}
+        currentCount={regModal?.count}
       />
     </div>
   )
 }
-

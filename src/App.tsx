@@ -21,6 +21,7 @@ import AdminSettings from './pages/admin/AdminSettings'
 import AdminEmailCampaign from './pages/admin/AdminEmailCampaign'
 import AdminHighlights from './pages/admin/AdminHighlights'
 import AdminFAQs from './pages/admin/AdminFAQs'
+import AdminEventRegistrations from './pages/admin/AdminEventRegistrations'
 import ProtectedRoute from './pages/admin/ProtectedRoute'
 
 export default function App() {
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="podcasts" element={<AdminPodcasts />} />
             <Route path="trainings" element={<AdminTrainings />} />
             <Route path="registrations" element={<AdminRegistrations />} />
+            <Route path="events/:type/:id" element={<AdminEventRegistrations />} />
             <Route path="blogs" element={<AdminBlogs />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="email-campaign" element={<AdminEmailCampaign />} />

@@ -25,6 +25,7 @@ const mockSeminars = [
     date: new Date(Date.now() + 7 * 86400000).toISOString(),
     location: 'Addis Ababa & Online',
     registration_link: null,
+    max_registrations: 25,
     created_at: new Date().toISOString()
   },
   {
@@ -35,6 +36,7 @@ const mockSeminars = [
     date: new Date(Date.now() + 14 * 86400000).toISOString(),
     location: 'Virtual (Zoom)',
     registration_link: 'https://zoom.us',
+    max_registrations: 50,
     created_at: new Date().toISOString()
   },
   {
@@ -45,6 +47,7 @@ const mockSeminars = [
     date: new Date(Date.now() - 30 * 86400000).toISOString(),
     location: 'Addis Ababa',
     registration_link: null,
+    max_registrations: 15,
     created_at: new Date().toISOString()
   }
 ]
@@ -95,6 +98,7 @@ const mockTrainings = [
     price: 4500,
     status: 'ongoing',
     image_url: null,
+    max_registrations: 20,
     created_at: new Date().toISOString()
   },
   {
@@ -106,6 +110,7 @@ const mockTrainings = [
     price: 2500,
     status: 'self-paced',
     image_url: null,
+    max_registrations: 100,
     created_at: new Date().toISOString()
   },
   {
@@ -117,6 +122,7 @@ const mockTrainings = [
     price: 3500,
     status: 'upcoming',
     image_url: null,
+    max_registrations: 15,
     created_at: new Date().toISOString()
   }
 ]
