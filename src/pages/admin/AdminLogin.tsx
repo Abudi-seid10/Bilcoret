@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { Lock, Mail, Loader2, ShieldCheck, ArrowRight } from 'lucide-react'
+import { Lock, Mail, Loader2, ArrowRight } from 'lucide-react'
 
 function LogoIcon({ className = '' }: { className?: string }) {
   return (
@@ -21,9 +21,8 @@ function LogoIcon({ className = '' }: { className?: string }) {
 }
 
 export default function AdminLogin() {
-  const { signIn, signUp } = useAuth()
+  const { signIn } = useAuth()
   const navigate = useNavigate()
-  const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -34,8 +33,7 @@ export default function AdminLogin() {
     setLoading(true)
     setError('')
 
-    const fn = mode === 'login' ? signIn : signUp
-    const { error } = await fn(email, password)
+    const { error } = await signIn(email, password)
 
     if (error) {
       setError(error)
@@ -55,19 +53,14 @@ export default function AdminLogin() {
         </div>
 
         <div className="bg-white p-8 shadow-2xl" style={{ borderRadius: '4px' }}>
-          <div className="flex border-b border-slate-200 mb-6">
-            <button
-              onClick={() => { setMode('login'); setError('') }}
-              className={`flex-1 pb-3 text-sm font-bold uppercase tracking-wide transition ${
-                mode === 'login' ? 'text-bilcor-green border-b-2 border-bilcor-green' : 'text-bilcor-charcoal/40 hover:text-bilcor-charcoal/60'
-              }`}
-            >
-              Sign In
-            </button>
-            
+          <div className="mb-6 pb-4 border-b border-slate-100">
+            <h2 className="text-lg font-bold text-bilcor-green uppercase tracking-wide">
+              Admin Sign In
+            </h2>
+            <p className="text-xs text-bilcor-charcoal/60 mt-1">
+              Enter your credentials to access the administration dashboard.
+            </p>
           </div>
-
-          
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -119,7 +112,7 @@ export default function AdminLogin() {
                 <><Loader2 className="w-4 h-4 animate-spin" /> Please wait...</>
               ) : (
                 <>
-                  {mode === 'login' ? 'Sign In' : 'Create Account'}
+                  Sign In
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

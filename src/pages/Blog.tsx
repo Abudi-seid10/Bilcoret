@@ -36,7 +36,9 @@ export default function Blog() {
       let mediaStore: Record<string, { cover_image?: string | null }> = {}
       try {
         mediaStore = JSON.parse(localStorage.getItem('bilcor_blog_media_store') || '{}')
-      } catch {}
+      } catch (e) {
+        console.warn('Failed to parse blog media store', e)
+      }
 
       const merged = (data ?? []).map((p: any) => ({
         ...p,

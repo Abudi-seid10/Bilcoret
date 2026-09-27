@@ -72,7 +72,9 @@ export default function AdminBlogs() {
     let mediaStore: Record<string, { cover_image?: string | null; images?: string[] | null }> = {}
     try {
       mediaStore = JSON.parse(localStorage.getItem('bilcor_blog_media_store') || '{}')
-    } catch {}
+    } catch (e) {
+      console.warn('Failed to parse blog media store', e)
+    }
 
     const mergedPosts = rawPosts.map((p: BlogPost) => {
       const stored = mediaStore[p.slug] || mediaStore[p.id] || {}
@@ -246,7 +248,9 @@ export default function AdminBlogs() {
           images: fullPayload.images,
         }
         localStorage.setItem('bilcor_blog_media_store', JSON.stringify(mediaStore))
-      } catch {}
+      } catch (e) {
+        console.warn('Failed to update blog media store', e)
+      }
 
       setShowForm(false)
       fetchPosts()

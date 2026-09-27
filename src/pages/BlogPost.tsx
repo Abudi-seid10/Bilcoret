@@ -41,7 +41,9 @@ export default function BlogPost() {
         let mediaStore: Record<string, { cover_image?: string | null; images?: string[] | null }> = {}
         try {
           mediaStore = JSON.parse(localStorage.getItem('bilcor_blog_media_store') || '{}')
-        } catch {}
+        } catch (e) {
+          console.warn('Failed to parse blog media store', e)
+        }
 
         const stored = mediaStore[data.slug] || mediaStore[data.id] || {}
         const cover_image = data.cover_image || stored.cover_image || (stored.images && stored.images[0]) || null
