@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { sendStatusEmail } from '../../lib/emailService'
@@ -66,7 +66,7 @@ export default function AdminEventRegistrations() {
 
   const isSeminar = type === 'seminar'
 
-  async function fetchEventAndRegistrations() {
+  const fetchEventAndRegistrations = useCallback(async () => {
     if (!id || !type) return
     setLoading(true)
 
@@ -108,11 +108,11 @@ export default function AdminEventRegistrations() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, type, isSeminar])
 
   useEffect(() => {
     fetchEventAndRegistrations()
-  }, [id, type])
+  }, [fetchEventAndRegistrations])
 
   // Save updated capacity
   async function handleSaveCapacity() {

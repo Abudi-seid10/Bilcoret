@@ -120,6 +120,18 @@ export default function Footer() {
         <div className="mt-12 pt-6 border-t border-white/10 text-sm text-center text-white/40">
           &copy; {new Date().getFullYear()} Bilcor — Institute of Leadership Coaching and Research. All rights reserved.
         </div>
+
+        <div className="mt-3 text-sm text-center text-white/40">
+  🧑‍💻 <span className="mx-1">&lt;/&gt;</span> built by{" "}
+  <a
+    href="https://motech.et"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-white/60 hover:text-white transition-colors"
+  >
+    MoTech Solutions
+  </a>
+</div>
       </div>
     </footer>
   )
